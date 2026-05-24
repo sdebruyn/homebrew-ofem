@@ -43,12 +43,13 @@ cask "ofem" do
   zap trash: [
     "~/Library/Application Support/dev.debruyn.ofem",
     "~/Library/Caches/dev.debruyn.ofem",
+    # Each OneLake account materialises as its own File Provider domain
+    # under `~/Library/CloudStorage/OneLake-<alias>/` and may contain
+    # pending uploads. Only trashed on explicit `brew uninstall --zap` —
+    # never on a plain `brew uninstall`.
+    "~/Library/CloudStorage/OneLake-*",
     "~/Library/LaunchAgents/dev.debruyn.ofem.plist",
     "~/Library/Logs/OFEM",
     "~/Library/Preferences/dev.debruyn.ofem.plist",
-    # ~/OneLake is the user's mount point and may contain pending uploads.
-    # Only trashed on explicit `brew uninstall --zap` — never on a plain
-    # `brew uninstall`.
-    "~/OneLake",
   ]
 end
