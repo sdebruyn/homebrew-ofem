@@ -16,11 +16,20 @@ cask "ofem" do
   version "0.0.0"
   sha256 :no_check
 
-  url "https://github.com/sdebruyn/onelake-explorer-macos/releases/download/v#{version}/OneLake-#{version}.dmg",
-      verified: "github.com/sdebruyn/onelake-explorer-macos/"
+  url "https://github.com/sdebruyn/onelake-explorer-macos/releases/download/v#{version}/OneLake-#{version}.dmg"
   name "OneLake"
   desc "Finder integration for Microsoft Fabric OneLake"
   homepage "https://github.com/sdebruyn/onelake-explorer-macos"
+
+  # No releases exist yet for the dummy 0.0.0 cask. Once the first real
+  # tag ships on sdebruyn/onelake-explorer-macos, swap this for:
+  #   livecheck do
+  #     url :url
+  #     strategy :github_latest
+  #   end
+  livecheck do
+    skip "No published releases yet — first real CalVer tag is pending"
+  end
 
   depends_on macos: :sonoma
   depends_on arch: :arm64
