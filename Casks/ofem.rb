@@ -1,55 +1,47 @@
-# Dummy 0.0.0 cask used to validate the tap-install pipeline before the first
-# real signed and notarized release of OFEM ships.
-#
-# The download URL below points at a release asset that does not exist yet —
-# `brew install` will 404 until we tag v0.0.0 (or the first real CalVer
-# release) on sdebruyn/onelake-explorer-macos. The cask still parses, audits,
-# and lets us validate `brew tap` + `brew info` end-to-end.
-#
-# `sha256 :no_check` is intentional for the dummy. On the first real release
-# this becomes the real DMG SHA-256 (goreleaser computes and patches it as
-# part of the release pipeline — see docs/packaging-homebrew.md in the main
-# repo).
-cask "ofem" do
-  arch arm: "arm64"
+# frozen_string_literal: true
 
-  version "0.0.0"
-  sha256 :no_check
+# Homebrew cask for OFEM — OneLake Explorer for macOS.
+#
+# This file is a template. The release workflow renders it by substituting:
+#   2026.05.1   -> CalVer string, e.g. 2026.05.1
+#   8bdc37e351d7fcea6c52fe835922b097f1c3bacbdf450132b7b3fb72570c2d01 -> SHA-256 of the signed and notarized DMG
+#
+# The rendered file is committed to sdebruyn/homebrew-ofem as Casks/ofem.rb
+# by the `Update Homebrew cask` step in .github/workflows/release.yml.
+cask "ofem" do
+  version "2026.05.1"
+  sha256 "8bdc37e351d7fcea6c52fe835922b097f1c3bacbdf450132b7b3fb72570c2d01"
 
   url "https://github.com/sdebruyn/onelake-explorer-macos/releases/download/v#{version}/OneLake-#{version}.dmg"
-  name "OneLake"
-  desc "Finder integration for Microsoft Fabric OneLake"
-  homepage "https://github.com/sdebruyn/onelake-explorer-macos"
+  name "OneLake Explorer for macOS"
+  desc "Browse Microsoft Fabric OneLake from Finder"
+  homepage "https://ofem.debruyn.dev"
 
-  # No releases exist yet for the dummy 0.0.0 cask. Once the first real
-  # tag ships on sdebruyn/onelake-explorer-macos, swap this for:
-  #   livecheck do
-  #     url :url
-  #     strategy :github_latest
-  #   end
   livecheck do
-    skip "No published releases yet — first real CalVer tag is pending"
+    # Skip until the first stable CalVer release tag is pushed. Once
+    # v2026.MM.PATCH is live, replace with:
+    #   url :url
+    #   strategy :github_releases
+    #   regex(/^v(\d+\.\d+\.\d+)$/i)
+    skip "pre-release — no stable tag yet"
   end
 
-  depends_on macos: :sonoma
+  depends_on macos: ">= :sonoma"
   depends_on arch: :arm64
 
   app "OneLake.app"
-  binary "#{appdir}/OneLake.app/Contents/Resources/bin/ofem"
 
-  uninstall launchctl: "dev.debruyn.ofem",
-            quit:      "dev.debruyn.ofem"
+  # The host app registers (and unregisters) the bundled daemon as a
+  # LaunchAgent via SMAppService on first launch / on quit, so no
+  # postflight script or launchctl hookup is needed from the cask.
+  uninstall launchctl: "dev.debruyn.ofem.daemon",
+            quit:      "dev.debruyn.ofem.app"
 
   zap trash: [
-    "~/Library/Application Support/dev.debruyn.ofem",
-    "~/Library/Caches/dev.debruyn.ofem",
-    # Each OneLake account materialises as its own File Provider domain
-    # under `~/Library/CloudStorage/OneLake-<alias>/` and may contain
-    # pending uploads. Only trashed on explicit `brew uninstall --zap` —
-    # never on a plain `brew uninstall`.
-    "~/Library/CloudStorage/OneLake-*",
-    "~/Library/LaunchAgents/dev.debruyn.ofem.plist",
-    "~/Library/Logs/OFEM",
+    "~/Library/Group Containers/group.dev.debruyn.ofem",
     "~/Library/Preferences/dev.debruyn.ofem.plist",
+    # Each account materialises as its own File Provider domain.
+    # Zapped only on explicit `brew uninstall --zap` to avoid data loss.
+    "~/Library/CloudStorage/OneLake-*",
   ]
 end
