@@ -3,14 +3,14 @@
 # Homebrew cask for OFEM — OneLake Explorer for macOS.
 #
 # This file is a template. The release workflow renders it by substituting:
-#   2026.06.1   -> CalVer string, e.g. 2026.05.1
-#   998fcb8995a29f02271c4061edf79695b30f3ab40ca3f402aae0e84788701f43 -> SHA-256 of the signed and notarized DMG
+#   2026.06.2   -> CalVer string, e.g. 2026.05.1
+#   bbb88bff9ea68d42a9d1e45e427b513900914e05febc5f71f86dfd041d75fb63 -> SHA-256 of the signed and notarized DMG
 #
 # The rendered file is committed to sdebruyn/homebrew-ofem as Casks/ofem.rb
 # by the `Update Homebrew cask` step in .github/workflows/release.yml.
 cask "ofem" do
-  version "2026.06.1"
-  sha256 "998fcb8995a29f02271c4061edf79695b30f3ab40ca3f402aae0e84788701f43"
+  version "2026.06.2"
+  sha256 "bbb88bff9ea68d42a9d1e45e427b513900914e05febc5f71f86dfd041d75fb63"
 
   url "https://github.com/sdebruyn/onelake-explorer-macos/releases/download/v#{version}/OneLake-#{version}.dmg"
   name "OneLake Explorer for macOS"
@@ -31,9 +31,14 @@ cask "ofem" do
 
   app "OneLake.app"
 
-  # The host app registers (and unregisters) the bundled daemon as a
-  # LaunchAgent via SMAppService on first launch / on quit, so no
-  # postflight script or launchctl hookup is needed from the cask.
+  # The host app registers the bundled daemon via SMAppService on first
+  # launch. We open the app post-install so that first launch happens
+  # immediately, instead of forcing the user to manually launch the app
+  # before the menu bar / Finder integration starts working.
+  postflight do
+    system_command "/usr/bin/open", args: ["-a", "OneLake"]
+  end
+
   uninstall launchctl: "dev.debruyn.ofem.daemon",
             quit:      "dev.debruyn.ofem.app"
 
