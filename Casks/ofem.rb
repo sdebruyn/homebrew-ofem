@@ -3,14 +3,14 @@
 # Homebrew cask for OFEM — OneLake Explorer for macOS.
 #
 # This file is a template. The release workflow renders it by substituting:
-#   2026.06.5   -> CalVer string, e.g. 2026.05.1
-#   22b7273c0cb623a116faaf4deba8377122b190b199032d322e3ae4c2b1911573 -> SHA-256 of the signed and notarized DMG
+#   2026.06.6   -> CalVer string, e.g. 2026.05.1
+#   07f523f33019971ebc7c5739bbac21c483ef16f585e1f2c741b79a68e4ea7536 -> SHA-256 of the signed and notarized DMG
 #
 # The rendered file is committed to sdebruyn/homebrew-ofem as Casks/ofem.rb
 # by the `Update Homebrew cask` step in .github/workflows/release.yml.
 cask "ofem" do
-  version "2026.06.5"
-  sha256 "22b7273c0cb623a116faaf4deba8377122b190b199032d322e3ae4c2b1911573"
+  version "2026.06.6"
+  sha256 "07f523f33019971ebc7c5739bbac21c483ef16f585e1f2c741b79a68e4ea7536"
 
   url "https://github.com/sdebruyn/onelake-explorer-macos/releases/download/v#{version}/OneLake-#{version}.dmg"
   name "OneLake Explorer for macOS"
