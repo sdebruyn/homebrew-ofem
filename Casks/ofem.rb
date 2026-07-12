@@ -3,14 +3,14 @@
 # Homebrew cask for OFEM — OneLake Explorer for macOS.
 #
 # This file is a template. The release workflow renders it by substituting:
-#   2026.06.16   -> CalVer string, e.g. 2026.05.1
-#   54ca11dbf2b5175f5b2a2c6a337023f67721c6fe778ec1cba9b269f23d49c121 -> SHA-256 of the signed and notarized DMG
+#   2026.07.1   -> CalVer string, e.g. 2026.05.1
+#   a77753ab1550d47c277210225ff39ba82116ed662f2d59ce25445a94a289be33 -> SHA-256 of the signed and notarized DMG
 #
 # The rendered file is committed to sdebruyn/homebrew-ofem as Casks/ofem.rb
 # by the `Update Homebrew cask` step in .github/workflows/release.yml.
 cask "ofem" do
-  version "2026.06.16"
-  sha256 "54ca11dbf2b5175f5b2a2c6a337023f67721c6fe778ec1cba9b269f23d49c121"
+  version "2026.07.1"
+  sha256 "a77753ab1550d47c277210225ff39ba82116ed662f2d59ce25445a94a289be33"
 
   url "https://github.com/sdebruyn/onelake-explorer-macos/releases/download/v#{version}/OneLake-#{version}.dmg",
       verified: "github.com/sdebruyn/onelake-explorer-macos/"
@@ -38,7 +38,10 @@ cask "ofem" do
     # Each account materialises as its own File Provider domain.
     # Zapped only on explicit `brew uninstall --zap` to avoid data loss.
     "~/Library/CloudStorage/OneLake-*",
+    # Host app and FPE are both sandboxed, so their preferences live
+    # inside their own containers, not ~/Library/Preferences directly.
+    "~/Library/Containers/dev.debruyn.ofem",
+    "~/Library/Containers/dev.debruyn.ofem.fileprovider",
     "~/Library/Group Containers/6D79CUWZ4J.group.dev.debruyn.ofem",
-    "~/Library/Preferences/dev.debruyn.ofem.plist",
   ]
 end
